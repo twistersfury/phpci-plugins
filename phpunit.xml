@@ -9,9 +9,13 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         stderr="true"
          syntaxCheck="true">
     <testsuite name="PHP-CI">
         <directory>./tests</directory>
     </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
 </phpunit>

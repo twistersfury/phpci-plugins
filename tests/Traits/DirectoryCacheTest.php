@@ -9,8 +9,6 @@
 
     use org\bovigo\vfs\vfsStream;
     use org\bovigo\vfs\vfsStreamDirectory;
-    use org\bovigo\vfs\vfsStreamFile;
-    use TwistersFury\PhpCi\Traits\DirectoryCache;
 
     class DirectoryCacheTest extends \PHPUnit_Framework_TestCase {
         /** @var \TwistersFury\PhpCi\Traits\DirectoryCache|\PHPUnit_Framework_MockObject_MockObject */
@@ -36,8 +34,9 @@
         }
 
         /**
-         * @covers DirectoryCache::isCacheValid
-         * @covers DirectoryCache::hasCacheExpired
+         * @covers TwistersFury\PhpCi\Traits\DirectoryCache::isCacheValid
+         * @covers TwistersFury\PhpCi\Traits\DirectoryCache::hasCacheExpired
+         * @covers TwistersFury\PhpCi\Traits\DirectoryCache::getDirectory
          */
         public function testIsCacheValid() {
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Not Exit');
