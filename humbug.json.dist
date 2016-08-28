@@ -2,6 +2,12 @@
     "source": {
         "directories": [
             "src"
+        ],
+        "excludes": [
+            "src/defines.php",
+            "src/functions.php",
+            "vendor",
+            "tests"
         ]
     },
     "timeout": 10,

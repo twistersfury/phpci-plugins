@@ -37,8 +37,12 @@
             /** @var Grunt|\PHPUnit_Framework_MockObject_MockObject $testGrunt */
             $testGrunt = $this->getMockBuilder('\TwistersFury\PhpCi\Plugin\Grunt')
                 ->setConstructorArgs([$mockBuilder, $mockModel, []])
-                ->setMethods(['saveCache'])
+                ->setMethods(['saveCache', 'removeCache'])
                 ->getMock();
+
+            $testGrunt->expects($this->once())
+                ->method('removeCache')
+                ->willReturnSelf();
 
             if (!$returnValue) {
                 $testGrunt->expects($this->never())

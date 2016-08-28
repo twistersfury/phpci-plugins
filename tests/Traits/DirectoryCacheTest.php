@@ -41,22 +41,23 @@
         public function testIsCacheValid() {
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Not Exit');
 
+            $currentTime = time();
+
             $vfsCache     = vfsStream::newDirectory('cache');
             $vfsDirectory = vfsStream::newDirectory('somePath');
 
-            $vfsDirectory->lastModified(time() + 100);
-            $this->_vfsRoot->getChild('somePath')->lastModified(time() - 100);
+            $vfsDirectory->lastModified($currentTime);
+            $this->_vfsRoot->getChild('somePath')->lastModified($currentTime);
 
             $vfsCache->addChild($vfsDirectory);
             $this->_vfsRoot->addChild($vfsCache);
 
             $this->assertTrue($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Exist');
 
-            $vfsDirectory->lastModified(time() - 100);
-            $this->_vfsRoot->getChild('somePath')->lastModified(time() + 100);
+            $vfsDirectory->lastModified($currentTime);
+            $this->_vfsRoot->getChild('somePath')->lastModified($currentTime + 1);
 
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Caches Exists But Expired');
-
         }
 
         public function testRemoveCache() {
@@ -68,7 +69,7 @@
             $vfsCache->addChild($vfsDirectory);
             $this->_vfsRoot->addChild($vfsCache);
 
-            $this->_testSubject->removeCache();
+            $this->assertEquals($this->_testSubject, $this->_testSubject->removeCache());
 
             $this->assertNull($vfsCache->getChild('somePath'));
         }
@@ -76,7 +77,10 @@
         public function testSaveCache() {
             $this->assertFalse(file_exists($this->_testSubject->getCacheDirectory()));
 
-            $this->_testSubject->saveCache();
+            $this->assertEquals($this->_testSubject, $this->_testSubject->saveCache());
+
+            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache')->getPermissions());
+            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath')->getPermissions());
 
             $this->assertTrue(file_exists($this->_testSubject->getCacheDirectory() . '/someFile'));
         }
