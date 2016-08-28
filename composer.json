@@ -1,0 +1,34 @@
+{
+  "name": "twistersfury/phpci-plugins",
+  "homepage":"https://github.com/twistersfury/phpci-plugins",
+  "keywords": ["phpci","php-ci","plugins"],
+  "type":"library",
+  "description": "Additional Plugins for PHP-CI",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Twister's Fury",
+      "email": "info@twistersfury.com"
+    }
+  ],
+  "autoload" : {
+    "psr-4" : {
+      "TwistersFury\\PhpCi\\" : "src"
+    },
+    "files" : [
+      "src/functions.php",
+      "src/defines.php"
+    ]
+  },
+  "require" : {
+    "php": ">=5.3.8",
+    "block8/phpci" : "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.4",
+    "mikey179/vfsStream": "1.6.x-dev"
+  },
+  "config" : {
+    "prepend-autoloader" : false
+  }
+}
