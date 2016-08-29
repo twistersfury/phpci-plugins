@@ -15,7 +15,7 @@
         use DirectoryCache;
 
         public function getDirectory() {
-            return $this->directory . 'node_modules';
+            return $this->getBuildPath() . 'node_modules';
         }
 
         public function getConfigFile() {
