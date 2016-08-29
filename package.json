@@ -1,0 +1,11 @@
+{
+  "name": "twistersfury-phpci-plugins",
+  "version": "0.1.2",
+  "description": "PHP-CI Plugins",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  },
+  "dependencies": {
+    "grunt-cli": "^1.2.0"
+  }
+}
