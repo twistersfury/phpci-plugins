@@ -10,7 +10,7 @@ setup:
     action: "install"
   grunt:
     grunt: "./node_modules/grunt-cli/bin/grunt"
-    task: "compile"
+    task: "default"
 
 test:
   php_unit:
