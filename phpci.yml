@@ -4,6 +4,7 @@ build_settings:
     - "vendor"
     - "cache"
   default_mailto_address: "phoenix@twistersfury.com"
+  quiet: true
 
 setup:
   composer:
