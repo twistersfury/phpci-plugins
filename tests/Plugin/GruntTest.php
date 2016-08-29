@@ -7,12 +7,15 @@
      */
     namespace TwistersFury\PhpCi\tests\Plugin;
 
+    use org\bovigo\vfs\vfsStream;
     use TwistersFury\PhpCi\Plugin\Grunt;
 
     class GruntTest extends \PHPUnit_Framework_TestCase {
         /** @dataProvider _dpTestExecute */
         public function testExecute($returnValue) {
             $configFile = '/some/path';
+
+            $vfsRoot = vfsStream::setup('virtualRoot');
 
             include_once dirname(PHPUNIT_COMPOSER_INSTALL) . '/block8/phpci/vars.php';
 
@@ -37,8 +40,10 @@
             /** @var Grunt|\PHPUnit_Framework_MockObject_MockObject $testGrunt */
             $testGrunt = $this->getMockBuilder('\TwistersFury\PhpCi\Plugin\Grunt')
                 ->setConstructorArgs([$mockBuilder, $mockModel, []])
-                ->setMethods(['saveCache', 'removeCache'])
+                ->setMethods(['saveCache', 'removeCache', 'getBuildPath'])
                 ->getMock();
+
+            $testGrunt->method('getBuildPath')->willReturn($vfsRoot->url() . '/');
 
             $testGrunt->expects($this->once())
                 ->method('removeCache')
