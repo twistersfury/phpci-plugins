@@ -16,6 +16,9 @@ test:
   php_unit:
     config: "./phpunit.xml"
     run_from: "./"
+  copy_build:
+    directory: "/tmp/build"
+    wipe: true
 # php_mess_detector:
 #   allow_failures: true
 #  php_loc:
