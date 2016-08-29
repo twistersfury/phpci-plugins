@@ -8,6 +8,12 @@
 
     namespace TwistersFury\PhpCi\Traits;
 
+    /**
+     * Class DirectoryCache
+     *
+     * @package TwistersFury\PhpCi\Traits
+     * @property \PHPCI\Builder phpci
+     */
     trait DirectoryCache {
         abstract public function getDirectory();
 
@@ -20,6 +26,9 @@
         }
 
         public function isCacheValid() {
+            $this->phpci->log('Directory Cache: ' . $this->getCacheDirectory());
+            $this->phpci->log('Directory: ' . $this->getDirectory());
+
             if (!file_exists($this->getCacheDirectory()) || $this->hasCacheExpired()) {
                 return FALSE;
             }

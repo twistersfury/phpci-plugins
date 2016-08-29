@@ -18,7 +18,7 @@
 
             $mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
                 ->disableOriginalConstructor()
-                ->setMethods(['executeCommand', 'findBinary'])
+                ->setMethods(['executeCommand', 'findBinary', 'log'])
                 ->getMock();
 
             //NOTE: Don't Really Care What It Is Called With. This Just Confirms The Parent Gets Called.

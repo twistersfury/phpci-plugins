@@ -27,6 +27,12 @@
 
             $this->_testSubject->method('getCacheRoot')->willReturn($this->_vfsRoot->url() . '/cache');
             $this->_testSubject->method('getDirectory')->willReturn($this->_vfsRoot->getChild('somePath')->url());
+
+            $mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+            $this->_testSubject->phpci = $mockBuilder;
         }
 
         public function testGetCacheDirectory() {
