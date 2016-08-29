@@ -40,10 +40,10 @@
             /** @var Grunt|\PHPUnit_Framework_MockObject_MockObject $testGrunt */
             $testGrunt = $this->getMockBuilder('\TwistersFury\PhpCi\Plugin\Grunt')
                 ->setConstructorArgs([$mockBuilder, $mockModel, []])
-                ->setMethods(['saveCache', 'removeCache', 'getBuildPath'])
+                ->setMethods(['saveCache', 'removeCache', 'getCacheRoot'])
                 ->getMock();
 
-            $testGrunt->method('getBuildPath')->willReturn($vfsRoot->url() . '/');
+            $testGrunt->method('getCacheRoot')->willReturn($vfsRoot->url() . '/');
 
             $testGrunt->expects($this->once())
                 ->method('removeCache')
