@@ -19,14 +19,16 @@
         private $_vfsRoot     = NULL;
 
         public function setUp() {
-            $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFolder' => [], 'someFile' => '']]);
+            $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFolder' => [], 'someFile' => ''], 'someFile' => '']);
 
             $this->_testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Traits\DirectoryCache')
-                ->setMethods(['getDirectory', 'getCacheRoot'])
+                ->setMethods(['getDirectory', 'getCacheRoot', 'getConfigFile', 'getBuildPath'])
                 ->getMockForTrait();
 
             $this->_testSubject->method('getCacheRoot')->willReturn($this->_vfsRoot->url() . '/cache');
             $this->_testSubject->method('getDirectory')->willReturn($this->_vfsRoot->getChild('somePath')->url());
+            $this->_testSubject->method('getConfigFile')->willReturn('someFile');
+            $this->_testSubject->method('getBuildPath')->willReturn($this->_vfsRoot->url() . '/');
 
             $mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
                 ->disableOriginalConstructor()
@@ -61,7 +63,7 @@
             $this->assertTrue($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Exist');
 
             $vfsDirectory->lastModified($currentTime);
-            $this->_vfsRoot->getChild('somePath')->lastModified($currentTime + 1);
+            $this->_vfsRoot->getChild('someFile')->lastModified($currentTime + 1);
 
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Caches Exists But Expired');
         }

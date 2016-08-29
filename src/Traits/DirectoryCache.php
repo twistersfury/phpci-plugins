@@ -13,9 +13,11 @@
      *
      * @package TwistersFury\PhpCi\Traits
      * @property \PHPCI\Builder phpci
+     * @property string directory
      */
     trait DirectoryCache {
         abstract public function getDirectory();
+        abstract public function getConfigFile();
 
         public function getCacheRoot() {
             return '/tmp/twistersfury-phpci-cache';
@@ -37,10 +39,22 @@
         }
 
         public function hasCacheExpired() {
-            $cacheTime = filemtime($this->getCacheDirectory());
-            $realTime  = filemtime($this->getDirectory());
+            $configFiles = $this->getConfigFile();
+            if (!is_array($configFiles)) {
+                $configFiles = [$configFiles];
+            }
 
-            return $cacheTime < $realTime;
+            $cacheTime  = filemtime($this->getCacheDirectory());
+            $hasExpired = FALSE;
+
+            foreach($configFiles as $configFile) {
+                if ($cacheTime < filemtime($this->getBuildPath() . $configFile)) {
+                    $hasExpired = TRUE;
+                    break;
+                }
+            }
+
+            return $hasExpired;
         }
 
         public function removeCache() {
@@ -83,5 +97,9 @@
             }
 
             return $this;
+        }
+
+        public function getBuildPath() {
+            return $this->directory;
         }
     }
