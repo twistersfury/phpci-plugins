@@ -8,7 +8,7 @@ build_settings:
 setup:
   composer:
     action: "install"
-  TwistersFury\PhpCi\Plugin\Grunt:
+  \TwistersFury\PhpCi\Plugin\Grunt:
     grunt: "./node_modules/grunt-cli/bin/grunt"
     task: "default"
 
