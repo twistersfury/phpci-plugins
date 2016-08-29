@@ -15,7 +15,7 @@
         use DirectoryCache;
 
         public function getDirectory() {
-            return 'node_modules';
+            return $this->directory . '/node_modules';
         }
 
         public function execute() {
