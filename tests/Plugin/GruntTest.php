@@ -64,7 +64,6 @@
         public function _dpTestExecute() {
             return [
                 [FALSE],
-                [TRUE],
                 [TRUE]
             ];
         }
