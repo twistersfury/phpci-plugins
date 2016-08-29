@@ -19,7 +19,7 @@
         private $_vfsRoot     = NULL;
 
         public function setUp() {
-            $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFile' => '']]);
+            $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFolder' => [], 'someFile' => '']]);
 
             $this->_testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Traits\DirectoryCache')
                 ->setMethods(['getDirectory', 'getCacheRoot'])
@@ -61,11 +61,15 @@
         }
 
         public function testRemoveCache() {
-            $vfsCache     = vfsStream::newDirectory('cache');
-            $vfsDirectory = vfsStream::newDirectory('somePath');
-            $vfsFile      = vfsStream::newFile('someFile', 'someContent');
+            $this->assertEquals($this->_testSubject, $this->_testSubject->removeCache());
+
+            $vfsCache        = vfsStream::newDirectory('cache');
+            $vfsDirectory    = vfsStream::newDirectory('somePath');
+            $vfsSubDirectory = vfsStream::newDirectory('subPath');
+            $vfsFile         = vfsStream::newFile('someFile', 'someContent');
 
             $vfsDirectory->addChild($vfsFile);
+            $vfsDirectory->addChild($vfsSubDirectory);
             $vfsCache->addChild($vfsDirectory);
             $this->_vfsRoot->addChild($vfsCache);
 
@@ -81,6 +85,7 @@
 
             $this->assertEquals(0755, $this->_vfsRoot->getChild('cache')->getPermissions());
             $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath')->getPermissions());
+            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath/someFolder')->getPermissions());
 
             $this->assertTrue(file_exists($this->_testSubject->getCacheDirectory() . '/someFile'));
         }
