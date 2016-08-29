@@ -28,7 +28,10 @@
         }
 
         public function hasCacheExpired() {
-            return filemtime($this->getCacheDirectory()) < filemtime($this->getDirectory());
+            $cacheTime = filemtime($this->getCacheDirectory());
+            $realTime  = filemtime($this->getDirectory());
+
+            return $cacheTime < $realTime;
         }
 
         public function removeCache() {
