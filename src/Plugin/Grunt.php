@@ -39,6 +39,8 @@
 
         public function logMessage($message, $level = LogLevel::INFO, $context = []) {
             $this->getBuilder()->log($message, $level, $context);
+
+            return $this;
         }
 
         public function getBuilder() {
