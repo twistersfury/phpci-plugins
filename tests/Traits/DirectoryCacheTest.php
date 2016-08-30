@@ -47,29 +47,36 @@
 
         /**
          * @covers TwistersFury\PhpCi\Traits\DirectoryCache::isCacheValid
-         * @covers TwistersFury\PhpCi\Traits\DirectoryCache::hasCacheExpired
          * @covers TwistersFury\PhpCi\Traits\DirectoryCache::getDirectory
          */
         public function testIsCacheValid() {
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Not Exit');
 
-            $currentTime = time();
-
-            $vfsCache     = vfsStream::newDirectory('cache');
-            $vfsDirectory = vfsStream::newDirectory('somePath');
-
-            $vfsDirectory->lastModified($currentTime);
-            $this->_vfsRoot->getChild('somePath')->lastModified($currentTime);
+            $vfsCache      = vfsStream::newDirectory('cache');
+            $vfsDirectory  = vfsStream::newDirectory('somePath');
 
             $vfsCache->addChild($vfsDirectory);
             $this->_vfsRoot->addChild($vfsCache);
 
-            $this->assertTrue($this->_testSubject->isCacheValid(), 'Failed Checking Cache Does Exist');
-
-            $vfsDirectory->lastModified($currentTime);
-            $this->_vfsRoot->getChild('someFile')->lastModified($currentTime + 1);
-
             $this->assertFalse($this->_testSubject->isCacheValid(), 'Failed Checking Caches Exists But Expired');
+        }
+
+        public function testHasCacheExpired() {
+            $hashArray = [
+                'someFile' => sha1_file($this->_vfsRoot->getChild('somePath/someFile')->url())
+            ];
+
+            $vfsCache        = vfsStream::newDirectory('cache');
+            $vfsDirectory    = vfsStream::newDirectory('somePath');
+            $vfsFile         = vfsStream::newFile('tf-hash.php');
+
+            $vfsFile->setContent('<?php return ' . var_export($hashArray, TRUE) . ';');
+
+            $vfsDirectory->addChild($vfsFile);
+            $vfsCache->addChild($vfsDirectory);
+            $this->_vfsRoot->addChild($vfsCache);
+
+            $this->assertFalse($this->_testSubject->hasCacheExpired());
         }
 
         public function testRemoveCache() {

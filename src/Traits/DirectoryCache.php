@@ -54,17 +54,25 @@
             return TRUE;
         }
 
+        public function generateCacheKey($filePath) {
+            return sha1_file($filePath);
+        }
+
         public function hasCacheExpired() {
             $configFiles = $this->getConfigFile();
             if (!is_array($configFiles)) {
                 $configFiles = [$configFiles];
             }
 
-            $cacheTime  = filemtime($this->getCacheDirectory());
+            $cachedHash = $this->loadCachedHash();
+            if (empty($cachedHash)) {
+                return TRUE;
+            }
+
             $hasExpired = FALSE;
 
             foreach($configFiles as $configFile) {
-                if ($cacheTime < filemtime($this->getBuildPath() . $configFile)) {
+                if ($cachedHash[$configFile] !== $this->generateCacheKey($this->getBuildPath() . $configFile)) {
                     $hasExpired = TRUE;
                     break;
                 }
@@ -127,5 +135,17 @@
 
         public function getBuildPath() {
             return $this->directory;
+        }
+
+        public function loadCachedHash() {
+            if (!file_exists($this->getHashPath())) {
+                return [];
+            }
+
+            return include $this->getHashPath();
+        }
+
+        public function getHashPath() {
+            return $this->getCacheDirectory() . DIRECTORY_SEPARATOR . 'tf-hash.php';
         }
     }
