@@ -47,11 +47,7 @@
             $this->logMessage('Directory Cache: ' . $this->getCacheDirectory());
             $this->logMessage('Directory: ' . $this->getDirectory());
 
-            if (!file_exists($this->getCacheDirectory()) || $this->hasCacheExpired()) {
-                return FALSE;
-            }
-
-            return TRUE;
+            return file_exists($this->getCacheDirectory()) && !$this->hasCacheExpired();
         }
 
         public function generateCacheKey($filePath) {
