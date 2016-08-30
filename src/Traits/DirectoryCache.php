@@ -47,7 +47,11 @@
             $this->logMessage('Directory Cache: ' . $this->getCacheDirectory());
             $this->logMessage('Directory: ' . $this->getDirectory());
 
-            return file_exists($this->getCacheDirectory()) && !$this->hasCacheExpired();
+            $isValid = file_exists($this->getCacheDirectory()) && !$this->hasCacheExpired();
+
+            $this->logMessage('Cache Valid: ' . var_export($isValid, TRUE));
+
+            return $isValid;
         }
 
         public function generateCacheKey($filePath) {
@@ -82,6 +86,8 @@
                 return $this;
             }
 
+            $this->logMessage('Removing Cache Folder: ' . $this->getCacheDirectory());
+
             foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getCacheDirectory(), \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $filePath) {
                 if ($filePath->isDir()) {
                     rmdir($filePath);
@@ -96,6 +102,7 @@
         }
 
         public function saveCache() {
+            $this->logMessage('Saving Cache Folder: ' . $this->getCacheDirectory());
             $copyResult = $this->getBuilder()->executeCommand(
                 'cp %s %s',
                 $this->getDirectory(),
