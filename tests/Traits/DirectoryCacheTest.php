@@ -62,6 +62,8 @@
         }
 
         public function testHasCacheExpired() {
+            $this->assertTrue($this->_testSubject->hasCacheExpired());
+
             $hashArray = [
                 'someFile' => sha1_file($this->_vfsRoot->getChild('somePath/someFile')->url())
             ];
@@ -77,6 +79,13 @@
             $this->_vfsRoot->addChild($vfsCache);
 
             $this->assertFalse($this->_testSubject->hasCacheExpired());
+
+            $hashArray = [
+                'someFile' => 'something'
+            ];
+
+            $vfsFile->setContent('<?php return ' . var_export($hashArray, TRUE) . ';');
+            $this->assertTrue($this->_testSubject->hasCacheExpired());
         }
 
         public function testRemoveCache() {
@@ -126,5 +135,16 @@
 
             $this->assertTrue($this->_testSubject->copyCache());
             $this->assertFileExists($this->_testSubject->getDirectory());
+        }
+
+        /**
+         * Test Not Really Needed. Just For Code Coverage.
+         */
+        public function testGetCacheRoot() {
+            /** @var \TwistersFury\PhpCi\Traits\DirectoryCache $testSubject */
+            $testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Traits\DirectoryCache')
+                ->getMockForTrait();
+
+            $this->assertEquals('/tmp/twistersfury-phpci-cache', $testSubject->getCacheRoot());
         }
     }
