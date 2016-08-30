@@ -24,9 +24,11 @@
         }
 
         public function execute() {
-            if (!$this->isCacheValid()) {
-                $this->removeCache();
+            if ($this->isCacheValid()) {
+                return $this->copyCache();
             }
+
+            $this->removeCache();
 
             if (($parentResult = parent::execute() === TRUE)) {
                 $this->saveCache();
@@ -36,6 +38,10 @@
         }
 
         public function logMessage($message, $level = LogLevel::INFO, $context = []) {
-            $this->phpci->log($message, $level, $context);
+            $this->getBuilder()->log($message, $level, $context);
+        }
+
+        public function getBuilder() {
+            return $this->phpci;
         }
     }
