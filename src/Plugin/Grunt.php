@@ -9,6 +9,7 @@
     namespace TwistersFury\PhpCi\Plugin;
 
     use PHPCI\Plugin\Grunt as pcGrunt;
+    use Psr\Log\LogLevel;
     use TwistersFury\PhpCi\Traits\DirectoryCache;
 
     class Grunt extends pcGrunt {
@@ -32,5 +33,9 @@
             }
 
             return $parentResult;
+        }
+
+        public function logMessage($message, $level = LogLevel::INFO, $context = []) {
+            $this->phpci->log($message, $level, $context);
         }
     }

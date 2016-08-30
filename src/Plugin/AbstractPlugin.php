@@ -11,6 +11,7 @@
     use PHPCI\Plugin;
     use PHPCI\Builder;
     use PHPCI\Model\Build;
+    use Psr\Log\LogLevel;
 
     abstract class AbstractPlugin implements Plugin {
         private $pluginOptions = NULL;
@@ -61,5 +62,9 @@
         /** @return Builder */
         public function getBuilder() {
             return $this->ciBuilder;
+        }
+
+        public function logMessage($message, $level = LogLevel::INFO, $context = []) {
+            return $this->getBuilder()->log($message, $level, $context);
         }
     }

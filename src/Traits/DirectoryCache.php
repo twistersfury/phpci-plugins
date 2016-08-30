@@ -8,6 +8,8 @@
 
     namespace TwistersFury\PhpCi\Traits;
 
+    use Psr\Log\LogLevel;
+
     /**
      * Class DirectoryCache
      *
@@ -18,6 +20,7 @@
     trait DirectoryCache {
         abstract public function getDirectory();
         abstract public function getConfigFile();
+        abstract public function logMessage($message, $level = LogLevel::INFO, $context = []);
 
         public function getCacheRoot() {
             return '/tmp/twistersfury-phpci-cache';
@@ -28,8 +31,8 @@
         }
 
         public function isCacheValid() {
-            $this->phpci->log('Directory Cache: ' . $this->getCacheDirectory());
-            $this->phpci->log('Directory: ' . $this->getDirectory());
+            $this->logMessage('Directory Cache: ' . $this->getCacheDirectory());
+            $this->logMessage('Directory: ' . $this->getDirectory());
 
             if (!file_exists($this->getCacheDirectory()) || $this->hasCacheExpired()) {
                 return FALSE;
