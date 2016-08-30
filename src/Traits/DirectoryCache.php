@@ -20,6 +20,14 @@
     trait DirectoryCache {
         abstract public function getDirectory();
         abstract public function getConfigFile();
+
+        /**
+         * @param        $message
+         * @param string $level
+         * @param array  $context
+         *
+         * @return $this
+         */
         abstract public function logMessage($message, $level = LogLevel::INFO, $context = []);
 
         /**
@@ -108,7 +116,13 @@
         }
 
         public function copyCache() {
-            return $this->getBuilder()->executeCommand('cp %s %s', rtrim($this->getCacheDirectory(), DIRECTORY_SEPARATOR), $this->getBuildPath());
+            return $this->logMessage('Using Cache Folder: ' . $this->getCacheDirectory())
+                ->getBuilder()
+                ->executeCommand(
+                    'cp %s %s',
+                    rtrim($this->getCacheDirectory(), DIRECTORY_SEPARATOR),
+                    $this->getBuildPath()
+                );
         }
 
         public function getBuildPath() {
