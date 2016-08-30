@@ -107,15 +107,23 @@
         }
 
         public function testSaveCache() {
-            $this->assertFalse(file_exists($this->_testSubject->getCacheDirectory()));
+            $this->mockBuilder->expects($this->once())
+                ->method('executeCommand')
+                ->with(
+                    'cp %s %s',
+                    $this->_testSubject->getDirectory(),
+                    $this->_testSubject->getCacheDirectory()
+                )->willReturn(TRUE);
 
-            $this->assertEquals($this->_testSubject, $this->_testSubject->saveCache());
+            $vfsCache        = vfsStream::newDirectory('cache');
+            $vfsDirectory    = vfsStream::newDirectory('somePath');
 
-            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache')->getPermissions());
-            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath')->getPermissions());
-            $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath/someFolder')->getPermissions());
+            $vfsCache->addChild($vfsDirectory);
+            $this->_vfsRoot->addChild($vfsCache);
 
-            $this->assertTrue(file_exists($this->_testSubject->getCacheDirectory() . '/someFile'));
+            $this->assertTrue($this->_testSubject->saveCache());
+
+            $this->assertFileExists($this->_testSubject->getHashPath());
         }
 
         public function testCopyCache() {

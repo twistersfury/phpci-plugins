@@ -96,27 +96,27 @@
         }
 
         public function saveCache() {
-            if (!file_exists($this->getCacheRoot())) {
-                mkdir($this->getCacheRoot(), 0755);
-            }
+            $copyResult = $this->getBuilder()->executeCommand(
+                'cp %s %s',
+                $this->getDirectory(),
+                $this->getCacheDirectory()
+            );
 
-            mkdir($this->getCacheDirectory(), 0755);
-
-            $basePath = dirname($this->getDirectory());
-
-            /** @var \SplFileInfo $filePath */
-            foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getDirectory(), \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST) as $filePath) {
-                $newPath = $this->getCacheRoot() . str_replace($basePath, '', $filePath);
-                $oldPath = $filePath->getPathname();
-
-                if ($filePath->isDir()) {
-                    mkdir($newPath, 0755);
-                } else {
-                    copy($oldPath, $newPath);
+            if ($copyResult) {
+                $hashArray = $this->getConfigFile();
+                if (!is_array($hashArray)) {
+                    $hashArray = [$hashArray];
                 }
+
+                $hashArray = array_flip($hashArray);
+                foreach($hashArray as $fileName => &$fileHash) {
+                    $fileHash = sha1_file($this->getDirectory() . DIRECTORY_SEPARATOR . $fileName);
+                }
+
+                file_put_contents($this->getHashPath(), '<?php return ' . var_export($hashArray) . ';');
             }
 
-            return $this;
+            return $copyResult;
         }
 
         public function copyCache() {
