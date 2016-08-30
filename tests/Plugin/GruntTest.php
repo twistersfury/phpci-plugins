@@ -61,6 +61,28 @@
             $this->assertEquals($returnValue, $testGrunt->execute());
         }
 
+        public function testLogMessage() {
+            $mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
+                ->disableOriginalConstructor()
+                ->setMethods(['executeCommand', 'findBinary', 'log'])
+                ->getMock();
+
+            $mockBuilder->expects($this->once())
+                ->method('log')
+                ->with('something');
+
+            /** @var \TwistersFury\PhpCi\Plugin\Grunt | \PHPUnit_Framework_MockObject_MockObject $testSubject */
+            $testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Plugin\Grunt')
+                ->disableOriginalConstructor()
+                ->setMethods(['getBuilder'])
+                ->getMock();
+
+            $testSubject->method('getBuilder')
+                ->willReturn($mockBuilder);
+
+            $this->assertSame($testSubject, $testSubject->logMessage('something'));
+        }
+
         public function _dpTestExecute() {
             return [
                 [FALSE],

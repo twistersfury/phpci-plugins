@@ -30,7 +30,7 @@
             $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFolder' => [], 'someFile' => ''], 'someFile' => '']);
 
             $this->_testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Traits\DirectoryCache')
-                ->setMethods(['getDirectory', 'getCacheRoot', 'getConfigFile', 'getBuildPath', 'getBuilder'])
+                ->setMethods(['getDirectory', 'getCacheRoot', 'getConfigFile', 'getBuildPath', 'getBuilder', 'logMessage'])
                 ->getMockForTrait();
 
             $this->_testSubject->method('getCacheRoot')->willReturn($this->_vfsRoot->url() . '/cache');
@@ -38,6 +38,7 @@
             $this->_testSubject->method('getConfigFile')->willReturn('someFile');
             $this->_testSubject->method('getBuildPath')->willReturn($this->_vfsRoot->url() . '/');
             $this->_testSubject->method('getBuilder')->willReturn($this->mockBuilder);
+            $this->_testSubject->method('logMessage')->willReturnSelf();
         }
 
         public function testGetCacheDirectory() {
