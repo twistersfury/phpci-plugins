@@ -14,27 +14,30 @@
         /** @var \TwistersFury\PhpCi\Traits\DirectoryCache|\PHPUnit_Framework_MockObject_MockObject */
         private $_testSubject = NULL;
 
+        /** @var \PHPCI\Builder|\PHPUnit_Framework_MockObject_MockObject */
+        private $mockBuilder = NULL;
+
 
         /** @var vfsStreamDirectory */
         private $_vfsRoot     = NULL;
 
         public function setUp() {
+            $this->mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
+                ->disableOriginalConstructor()
+                ->setMethods(['executeCommand'])
+                ->getMock();
+
             $this->_vfsRoot = vfsStream::setup('virtualRoot', NULL, ['somePath' => ['someFolder' => [], 'someFile' => ''], 'someFile' => '']);
 
             $this->_testSubject = $this->getMockBuilder('\TwistersFury\PhpCi\Traits\DirectoryCache')
-                ->setMethods(['getDirectory', 'getCacheRoot', 'getConfigFile', 'getBuildPath'])
+                ->setMethods(['getDirectory', 'getCacheRoot', 'getConfigFile', 'getBuildPath', 'getBuilder'])
                 ->getMockForTrait();
 
             $this->_testSubject->method('getCacheRoot')->willReturn($this->_vfsRoot->url() . '/cache');
             $this->_testSubject->method('getDirectory')->willReturn($this->_vfsRoot->getChild('somePath')->url());
             $this->_testSubject->method('getConfigFile')->willReturn('someFile');
             $this->_testSubject->method('getBuildPath')->willReturn($this->_vfsRoot->url() . '/');
-
-            $mockBuilder = $this->getMockBuilder('\PHPCI\Builder')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $this->_testSubject->phpci = $mockBuilder;
+            $this->_testSubject->method('getBuilder')->willReturn($this->mockBuilder);
         }
 
         public function testGetCacheDirectory() {
@@ -96,5 +99,24 @@
             $this->assertEquals(0755, $this->_vfsRoot->getChild('cache/somePath/someFolder')->getPermissions());
 
             $this->assertTrue(file_exists($this->_testSubject->getCacheDirectory() . '/someFile'));
+        }
+
+        public function testCopyCache() {
+            $vfsCache        = vfsStream::newDirectory('cache');
+            $vfsDirectory    = vfsStream::newDirectory('somePath');
+            $vfsSubDirectory = vfsStream::newDirectory('subPath');
+            $vfsFile         = vfsStream::newFile('someFile', 'someContent');
+
+            $vfsDirectory->addChild($vfsFile);
+            $vfsDirectory->addChild($vfsSubDirectory);
+            $vfsCache->addChild($vfsDirectory);
+            $this->_vfsRoot->addChild($vfsCache);
+
+            $this->mockBuilder->expects($this->once())
+                ->method('executeCommand')
+                ->willReturn(TRUE);
+
+            $this->assertTrue($this->_testSubject->copyCache());
+            $this->assertFileExists($this->_testSubject->getDirectory());
         }
     }

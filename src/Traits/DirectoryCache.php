@@ -22,6 +22,11 @@
         abstract public function getConfigFile();
         abstract public function logMessage($message, $level = LogLevel::INFO, $context = []);
 
+        /**
+         * @return \PHPCI\Builder
+         */
+        abstract public function getBuilder();
+
         public function getCacheRoot() {
             return '/tmp/twistersfury-phpci-cache';
         }
@@ -100,6 +105,10 @@
             }
 
             return $this;
+        }
+
+        public function copyCache() {
+            return $this->getBuilder()->executeCommand('cp %s %s', rtrim($this->getCacheDirectory(), DIRECTORY_SEPARATOR), $this->getBuildPath());
         }
 
         public function getBuildPath() {
